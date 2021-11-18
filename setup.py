@@ -11,7 +11,7 @@ setup(
     author_email='jarbasai@mailfence.com',
     license='Apache-2.0',
     packages=['neon_transformers'],
-    install_requires=["ovos-plugin-manager~=0.0.3"],
+    install_requires=["ovos-plugin-manager"],
     include_package_data=True,
     keywords='ovos neon plugin'
 )
