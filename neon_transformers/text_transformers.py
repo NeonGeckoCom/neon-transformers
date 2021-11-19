@@ -101,7 +101,7 @@ class UtteranceTransformersService:
         context = context or {}
 
         for module in self.modules:
-            utterance, data = module.transform(utterance)
+            utterance, data = module.transform(utterance, context)
             LOG.debug(f"{module.name}: {data}")
             context = merge_dict(context, data)
         return utterance, context
