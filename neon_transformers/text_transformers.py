@@ -17,27 +17,11 @@
 # SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-from ovos_plugin_manager.utils import load_plugin, find_plugins, PluginTypes
+from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
 from ovos_utils.configuration import read_mycroft_config
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
-
-
-def find_utterance_transformer_plugins():
-    return find_plugins(PluginTypes.UTTERANCE_TRANSFORMER)
-
-
-def load_utterance_transformer_plugin(module_name):
-    """Wrapper function for loading utterance_transformer plugin.
-
-    Arguments:
-        (str) Mycroft utterance_transformer module name from config
-    Returns:
-        class: found utterance_transformer plugin class
-    """
-    return load_plugin(module_name, PluginTypes.UTTERANCE_TRANSFORMER)
 
 
 class UtteranceTransformer:
@@ -92,7 +76,8 @@ class UtteranceTransformersService:
 
     @property
     def modules(self):
-        return self.loaded_modules.values()
+        return sorted(self.loaded_modules.values(),
+                      key=lambda k: k.priority, reverse=True)
 
     def shutdown(self):
         pass

@@ -18,28 +18,13 @@
 # WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 from speech_recognition import AudioData
-
+from ovos_plugin_manager.audio_transformers import find_audio_transformer_plugins, load_audio_transformer_plugin
 from ovos_plugin_manager.utils import load_plugin, find_plugins, PluginTypes
 from neon_transformers.streams import ReadWriteStream
 from ovos_utils.configuration import read_mycroft_config
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
-
-
-def find_audio_transformer_plugins():
-    return find_plugins(PluginTypes.AUDIO_TRANSFORMER)
-
-
-def load_audio_transformer_plugin(module_name):
-    """Wrapper function for loading audio_transformer plugin.
-
-    Arguments:
-        (str) Mycroft audio_transformer module name from config
-    Returns:
-        class: found audio_transformer plugin class
-    """
-    return load_plugin(module_name, PluginTypes.AUDIO_TRANSFORMER)
 
 
 class AudioTransformer:
@@ -159,7 +144,8 @@ class AudioTransformersService:
 
     @property
     def modules(self):
-        return self.loaded_modules.values()
+        return sorted(self.loaded_modules.values(),
+                      key=lambda k: k.priority, reverse=True)
 
     def shutdown(self):
         pass
