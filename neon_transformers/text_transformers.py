@@ -80,13 +80,20 @@ class UtteranceTransformersService:
                       key=lambda k: k.priority, reverse=True)
 
     def shutdown(self):
-        pass
+        for module in self.modules:
+            try:
+                module.shutdown()
+            except:
+                pass
 
     def transform(self, utterance, context=None):
         context = context or {}
 
         for module in self.modules:
-            utterance, data = module.transform(utterance, context)
-            LOG.debug(f"{module.name}: {data}")
-            context = merge_dict(context, data)
+            try:
+                utterance, data = module.transform(utterance, context)
+                LOG.debug(f"{module.name}: {data}")
+                context = merge_dict(context, data)
+            except:
+                pass
         return utterance, context

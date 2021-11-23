@@ -148,7 +148,11 @@ class AudioTransformersService:
                       key=lambda k: k.priority, reverse=True)
 
     def shutdown(self):
-        pass
+        for module in self.modules:
+            try:
+                module.shutdown()
+            except:
+                pass
 
     def get_chunk(self, audio_data):
         if isinstance(audio_data, AudioData):
@@ -179,10 +183,13 @@ class AudioTransformersService:
         context = {}
         chunk = self.get_chunk(audio_data)
         for module in self.modules:
-            chunk = module.feed_speech_utterance(chunk)
-            chunk, data = module.transform(chunk)
-            LOG.debug(f"{module.name}: {data}")
-            context = merge_dict(context, data)
+            try:
+                chunk = module.feed_speech_utterance(chunk)
+                chunk, data = module.transform(chunk)
+                LOG.debug(f"{module.name}: {data}")
+                context = merge_dict(context, data)
+            except:
+                pass
         # core expects a AudioData object
         audio_data.frame_data = chunk
         return audio_data, context
