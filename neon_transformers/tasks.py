@@ -29,3 +29,4 @@ class AudioTask(enum.IntEnum):
     ADD_CONTEXT = enum.auto()
     OTHER = enum.auto()
     REMOVE_NOISE = enum.auto()
+    TRIM_SILENCE = enum.auto()
