@@ -22,9 +22,11 @@ from ovos_utils.configuration import read_mycroft_config
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
-
+from neon_transformers.tasks import UtteranceTask
 
 class UtteranceTransformer:
+    task = UtteranceTask.OTHER
+
     def __init__(self, name, priority=50, config=None):
         self.name = name
         self.bus = None

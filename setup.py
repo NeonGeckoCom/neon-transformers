@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name='neon_transformers',
-    version='0.0.1',
+    version='0.0.1a1',
     description='',
     url='https://github.com/NeonGeckoCom/neon_transformers',
     author='JarbasAi',
