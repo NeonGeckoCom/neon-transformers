@@ -9,11 +9,31 @@ then returns the modified `utterances` and a new `context`
 
 `context` is simply a python dictionary, it can contain anything
 
+`utterances` is a list of transcription candidates, assumed to be a single utterance not a list of unrelated documents!
+
 A transformer might change the utterances or simply return them unmodified with a `context`
 
 eg. 
 - The translator transformer will detect language and translate as necessary, it returns modified utterances
 - the NER transformer return unmodified utterances and the context contains extracted entities
+
+Transformers may also depend on other transformers
+
+```python
+from neon_utterance_KeyBERT_plugin import KeyBERTExtractor
+from neon_utterance_wn_entailment_plugin import WordNetEntailments
+
+# depends on keywords being tagged by a prev transformer
+entail = WordNetEntailments()
+
+kbert = KeyBERTExtractor()  # or RAKE or YAKE ...
+
+utts = ["The man was snoring very loudly"]
+_, context = kbert.transform(utts)
+_, context = entail.transform(utts, context)
+print(context)
+# {'entailments': ['exhale', 'inhale', 'sleep']}
+```
 
 #### mycroft integration
 
