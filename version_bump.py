@@ -26,48 +26,29 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import time
-from threading import Event
+import fileinput
+from os.path import join, dirname
 
+with open(join(dirname(__file__), "version.py"), "r", encoding="utf-8") as v:
+    for line in v.readlines():
+        if line.startswith("__version__"):
+            if '"' in line:
+                version = line.split('"')[1]
+            else:
+                version = line.split("'")[1]
 
-class ReadWriteStream:
-    """
-    Class used to support writing binary audio data at any pace,
-    optionally chopping when the buffer gets too large
-    """
+if "a" not in version:
+    parts = version.split('.')
+    parts[-1] = str(int(parts[-1]) + 1)
+    version = '.'.join(parts)
+    version = f"{version}a0"
+else:
+    post = version.split("a")[1]
+    new_post = int(post) + 1
+    version = version.replace(f"a{post}", f"a{new_post}")
 
-    def __init__(self, s=b'', chop_samples=-1):
-        self.buffer = s
-        self.write_event = Event()
-        self.chop_samples = chop_samples
-
-    def __len__(self):
-        return len(self.buffer)
-
-    def read(self, n=-1, timeout=None):
-        if n == -1:
-            n = len(self.buffer)
-        if 0 < self.chop_samples < len(self.buffer):
-            samples_left = len(self.buffer) % self.chop_samples
-            self.buffer = self.buffer[-samples_left:]
-        return_time = 1e10 if timeout is None else (
-                timeout + time.time()
-        )
-        while len(self.buffer) < n:
-            self.write_event.clear()
-            if not self.write_event.wait(return_time - time.time()):
-                return b''
-        chunk = self.buffer[:n]
-        self.buffer = self.buffer[n:]
-        return chunk
-
-    def write(self, s):
-        self.buffer += s
-        self.write_event.set()
-
-    def flush(self):
-        """Makes compatible with sys.stdout"""
-        pass
-
-    def clear(self):
-        self.buffer = b''
+for line in fileinput.input(join(dirname(__file__), "version.py"), inplace=True):
+    if line.startswith("__version__"):
+        print(f"__version__ = \"{version}\"")
+    else:
+        print(line.rstrip('\n'))
