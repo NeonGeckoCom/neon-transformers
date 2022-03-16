@@ -63,7 +63,7 @@ setup(
     name='neon_transformers',
     version='0.0.1a1',
     description='',
-    url='https://github.com/NeonGeckoCom/neon_transformers',
+    url='https://github.com/NeonGeckoCom/neon-transformers',
     author='Neongecko',
     author_email='developers@neon.ai',
     license='BSD-3-Clause',
