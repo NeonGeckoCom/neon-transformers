@@ -61,7 +61,7 @@ with open("./version.py", "r", encoding="utf-8") as v:
 
 setup(
     name='neon_transformers',
-    version='0.0.1a1',
+    version=version,
     description='',
     url='https://github.com/NeonGeckoCom/neon-transformers',
     author='Neongecko',
