@@ -26,48 +26,45 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import time
-from threading import Event
+import os
+import sys
+import unittest
+
+from ovos_utils.messagebus import FakeBus
+
+from neon_transformers.tasks import UtteranceTask
+
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+from neon_transformers import AudioTransformer
 
 
-class ReadWriteStream:
-    """
-    Class used to support writing binary audio data at any pace,
-    optionally chopping when the buffer gets too large
-    """
+class MockTransformer(AudioTransformer):
+    task = UtteranceTask.TRANSFORM
 
-    def __init__(self, s=b'', chop_samples=-1):
-        self.buffer = s
-        self.write_event = Event()
-        self.chop_samples = chop_samples
+    def __init__(self):
+        super().__init__("mock_transformer")
 
-    def __len__(self):
-        return len(self.buffer)
+    def transform(self, utterances, context=None):
+        return utterances + ["transformer"], {}
 
-    def read(self, n=-1, timeout=None):
-        if n == -1:
-            n = len(self.buffer)
-        if 0 < self.chop_samples < len(self.buffer):
-            samples_left = len(self.buffer) % self.chop_samples
-            self.buffer = self.buffer[-samples_left:]
-        return_time = 1e10 if timeout is None else (
-                timeout + time.time()
-        )
-        while len(self.buffer) < n:
-            self.write_event.clear()
-            if not self.write_event.wait(return_time - time.time()):
-                return b''
-        chunk = self.buffer[:n]
-        self.buffer = self.buffer[n:]
-        return chunk
 
-    def write(self, s):
-        self.buffer += s
-        self.write_event.set()
+class MockContextAdder(AudioTransformer):
+    task = UtteranceTask.ADD_CONTEXT
 
-    def flush(self):
-        """Makes compatible with sys.stdout"""
+    def __init__(self):
+        super().__init__("mock_context_adder")
+
+    def transform(self, utterances, context=None):
+        return utterances, {"old_context": False,
+                            "new_context": True,
+                            "new_key": "test"}
+
+
+class AudioTransformersTests(unittest.TestCase):
+    def test_audio_transformer(self):
+        # TODO: Write these tests
         pass
 
-    def clear(self):
-        self.buffer = b''
+
+if __name__ == "__main__":
+    unittest.main()
