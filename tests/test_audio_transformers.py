@@ -61,8 +61,9 @@ class MockContextAdder(AudioTransformer):
 
 
 class AudioTransformersTests(unittest.TestCase):
-    # TODO: Write these tests
-    pass
+    def test_audio_transformer(self):
+        # TODO: Write these tests
+        pass
 
 
 if __name__ == "__main__":
