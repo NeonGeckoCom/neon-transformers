@@ -46,3 +46,11 @@ jobs:
         with:
           name: text-transformer-test-results
           path: tests/text-transformer-test-results.xml
+      - name: Test Audio Transformers
+        run: |
+          pytest tests/test_audio_transformers.py --doctest-modules --junitxml=tests/audio-transformer-test-results.xml
+      - name: Upload Audio Transformer test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: audio-transformer-test-results
+          path: tests/audio-transformer-test-results.xml
