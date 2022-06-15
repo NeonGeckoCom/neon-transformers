@@ -29,3 +29,5 @@ from neon_transformers.audio_transformers import AudioTransformer, AudioTransfor
     find_audio_transformer_plugins, load_audio_transformer_plugin
 from neon_transformers.text_transformers import UtteranceTransformersService, UtteranceTransformer, \
     find_utterance_transformer_plugins, load_utterance_transformer_plugin
+from neon_transformers.metadata_transformers import MetadataTransformersService, MetadataTransformer, \
+    load_metadata_transformer_plugin, find_metadata_transformer_plugins
