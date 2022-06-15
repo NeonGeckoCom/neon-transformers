@@ -1,2 +1,2 @@
-ovos-plugin-manager~=0.0.3
+ovos-plugin-manager~=0.0, >=0.0.18a6
 SpeechRecognition~=3.8
