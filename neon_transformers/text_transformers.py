@@ -28,7 +28,7 @@
 
 from typing import List, Optional
 from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
-from ovos_utils.configuration import read_mycroft_config
+from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
@@ -43,7 +43,7 @@ class UtteranceTransformer:
         self.bus = None
         self.priority = priority
         if not config:
-            config_core = read_mycroft_config()
+            config_core = dict(Configuration())
             config = config_core.get("utterance_transformers", {}).get(self.name)
         self.config = config or {}
 
