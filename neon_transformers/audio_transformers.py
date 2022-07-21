@@ -30,7 +30,7 @@ from speech_recognition import AudioData
 from ovos_plugin_manager.audio_transformers import find_audio_transformer_plugins, load_audio_transformer_plugin
 from ovos_plugin_manager.utils import load_plugin, find_plugins, PluginTypes
 from neon_transformers.streams import ReadWriteStream
-from ovos_utils.configuration import read_mycroft_config
+from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
@@ -59,7 +59,7 @@ class AudioTransformer:
         self.speech_feed = ReadWriteStream()
 
     def _read_mycroft_conf(self):
-        config_core = read_mycroft_config()
+        config_core = dict(Configuration())
         config = config_core.get("audio_transformers", {}).get(self.name) or {}
         listener_config = config_core.get("listener") or {}
         for k in ["sample_width", "sample_rate", "channels"]:
