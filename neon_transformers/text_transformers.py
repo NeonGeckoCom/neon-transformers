@@ -97,7 +97,7 @@ class UtteranceTransformersService:
     @property
     def modules(self):
         return sorted(self.loaded_modules.values(),
-                      key=lambda k: k.priority, reverse=True)
+                      key=lambda k: k.priority)
 
     def shutdown(self):
         for module in self.modules:
