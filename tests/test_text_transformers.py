@@ -121,7 +121,7 @@ class TextTransformersTests(unittest.TestCase):
         mod_1.priority = 2
         mod_1.transform = mod_1_parse
         mod_2 = Mock()
-        mod_2.priority = 100
+        mod_2.priority = 1
         mod_2.transform = mod_2_parse
 
         service.loaded_modules = \
@@ -137,7 +137,7 @@ class TextTransformersTests(unittest.TestCase):
                          len(utterances) + 2)
 
         # Check context change on priority swap
-        mod_2.priority = 1
+        mod_2.priority = 100
         _, context = service.transform(deepcopy(utterances),
                                        {'lang': lang})
         self.assertEqual(context["parser_context"], "mod_1")

@@ -95,6 +95,13 @@ class MetadataTransformersService:
 
     @property
     def modules(self):
+        """
+        Return loaded transformers in priority order, such that modules with a
+        higher `priority` rank are called first and changes from lower ranked
+        transformers are applied last.
+
+        A plugin of `priority` 1 will override any existing context keys
+        """
         return sorted(self.loaded_modules.values(),
                       key=lambda k: k.priority, reverse=True)
 

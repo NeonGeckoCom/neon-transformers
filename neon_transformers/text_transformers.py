@@ -96,8 +96,16 @@ class UtteranceTransformersService:
 
     @property
     def modules(self):
+        """
+        Return loaded transformers in priority order, such that modules with a
+        higher `priority` rank are called first and changes from lower ranked
+        transformers are applied last
+
+        A plugin of `priority` 1 will override any existing context keys and
+        will be the last to modify utterances`
+        """
         return sorted(self.loaded_modules.values(),
-                      key=lambda k: k.priority)
+                      key=lambda k: k.priority, reverse=True)
 
     def shutdown(self):
         for module in self.modules:
