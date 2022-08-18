@@ -26,17 +26,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from typing import List, Optional
-from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
+from typing import Optional
+from ovos_plugin_manager.metadata_transformers import find_metadata_transformer_plugins, load_metadata_transformer_plugin
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
 from ovos_utils.messagebus import get_mycroft_bus
-from neon_transformers.tasks import UtteranceTask
+from neon_transformers.tasks import MetadataTask
 
 
-class UtteranceTransformer:
-    task = UtteranceTask.OTHER
+class MetadataTransformer:
+    task = MetadataTask.OTHER
 
     def __init__(self, name, priority=50, config=None):
         self.name = name
@@ -44,7 +44,7 @@ class UtteranceTransformer:
         self.priority = priority
         if not config:
             config_core = dict(Configuration())
-            config = config_core.get("utterance_transformers", {}).get(self.name)
+            config = config_core.get("metadata_transformers", {}).get(self.name)
         self.config = config or {}
 
     def bind(self, bus=None):
@@ -55,54 +55,52 @@ class UtteranceTransformer:
         """ perform any initialization actions """
         pass
 
-    def transform(self, utterances: List[str],
-                  context: dict = None) -> (list, dict):
+    def transform(self, context: dict = None) -> (list, dict):
         """
-        Optionally transform passed utterances and/or return additional context
-        :param utterances: List of str utterances to parse
-        :param context: existing Message context associated with utterances
-        :returns: tuple of (possibly modified utterances, additional context)
+        Optionally transform passed context
+        eg. inject default values or convert metadata format
+        :param context: existing Message context from all previous transformers
+        :returns: dict of possibly modified or additional context
         """
-        return utterances, {}
+        context = context or {}
+        return context
 
     def default_shutdown(self):
         """ perform any shutdown actions """
         pass
 
 
-class UtteranceTransformersService:
+class MetadataTransformersService:
 
     def __init__(self, bus, config=None):
         self.config_core = config or {}
         self.loaded_modules = {}
         self.has_loaded = False
         self.bus = bus
-        self.config = self.config_core.get("utterance_transformers") or \
-            {"neon_utterance_translator": {}}
+        self.config = self.config_core.get("metadata_transformers") or {}
         self.load_plugins()
 
     def load_plugins(self):
-        for plug_name, plug in find_utterance_transformer_plugins().items():
+        for plug_name, plug in find_metadata_transformer_plugins().items():
             if plug_name in self.config:
                 # if disabled skip it
                 if not self.config[plug_name].get("active", True):
                     continue
                 try:
                     self.loaded_modules[plug_name] = plug()
-                    LOG.info(f"loaded utterance transformer plugin: {plug_name}")
+                    LOG.info(f"loaded metadata transformer plugin: {plug_name}")
                 except Exception as e:
                     LOG.error(e)
-                    LOG.exception(f"Failed to load utterance transformer plugin: {plug_name}")
+                    LOG.exception(f"Failed to load metadata transformer plugin: {plug_name}")
 
     @property
     def modules(self):
         """
         Return loaded transformers in priority order, such that modules with a
         higher `priority` rank are called first and changes from lower ranked
-        transformers are applied last
+        transformers are applied last.
 
-        A plugin of `priority` 1 will override any existing context keys and
-        will be the last to modify utterances`
+        A plugin of `priority` 1 will override any existing context keys
         """
         return sorted(self.loaded_modules.values(),
                       key=lambda k: k.priority, reverse=True)
@@ -114,14 +112,14 @@ class UtteranceTransformersService:
             except:
                 pass
 
-    def transform(self, utterances: List[str], context: Optional[dict] = None):
+    def transform(self, context: Optional[dict] = None):
         context = context or {}
 
         for module in self.modules:
             try:
-                utterances, data = module.transform(utterances, context)
+                data = module.transform(context)
                 LOG.debug(f"{module.name}: {data}")
                 context = merge_dict(context, data)
             except Exception as e:
                 LOG.warning(f"{module.name} transform exception: {e}")
-        return utterances, context
+        return context

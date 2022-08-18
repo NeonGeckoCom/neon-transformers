@@ -58,3 +58,14 @@ class AudioTask(enum.IntEnum):
     OTHER = enum.auto()
     REMOVE_NOISE = enum.auto()
     TRIM_SILENCE = enum.auto()
+
+
+class MetadataTask(enum.IntEnum):
+    """ A task is a user facing category
+    It is used in configuration files to assign preference to a plugin
+    when more than one solve the same problem
+    TRANSFORM, ADD_CONTEXT and OTHER are used as default values
+    """
+    TRANSFORM = enum.auto()
+    ADD_CONTEXT = enum.auto()
+    OTHER = enum.auto()
