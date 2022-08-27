@@ -78,7 +78,8 @@ class UtteranceTransformersService:
         self.has_loaded = False
         self.bus = bus
         self.config = self.config_core.get("utterance_transformers") or \
-            {"neon_utterance_translator": {}}
+            {"neon_utterance_translator_plugin": {},
+             "neon_utterance_normalizer_plugin": {}}
         self.load_plugins()
 
     def load_plugins(self):
