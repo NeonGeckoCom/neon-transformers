@@ -25,8 +25,10 @@
 # LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
+from copy import copy
 from typing import List, Optional
+
+from mycroft_bus_client import Message
 from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
@@ -116,12 +118,16 @@ class UtteranceTransformersService:
 
     def transform(self, utterances: List[str], context: Optional[dict] = None):
         context = context or {}
-
+        parser_context = dict()
         for module in self.modules:
             try:
                 utterances, data = module.transform(utterances, context)
                 LOG.debug(f"{module.name}: {data}")
-                context = merge_dict(context, data)
+                parser_context = merge_dict(parser_context, data)
             except Exception as e:
                 LOG.warning(f"{module.name} transform exception: {e}")
+        if context:
+            self.bus.emit(Message("neon.text_transformers.context",
+                                  parser_context, context))
+        merge_dict(context, parser_context)
         return utterances, context

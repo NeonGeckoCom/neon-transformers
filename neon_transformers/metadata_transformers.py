@@ -27,6 +27,8 @@
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from typing import Optional
+
+from mycroft_bus_client import Message
 from ovos_plugin_manager.metadata_transformers import find_metadata_transformer_plugins, load_metadata_transformer_plugin
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
@@ -114,12 +116,18 @@ class MetadataTransformersService:
 
     def transform(self, context: Optional[dict] = None):
         context = context or {}
+        parser_context = dict()
 
         for module in self.modules:
             try:
                 data = module.transform(context)
                 LOG.debug(f"{module.name}: {data}")
-                context = merge_dict(context, data)
+                parser_context = merge_dict(parser_context, data)
             except Exception as e:
                 LOG.warning(f"{module.name} transform exception: {e}")
+        if context:
+            self.bus.emit(Message("neon.metadata_transformers.context",
+                                  parser_context, context))
+        merge_dict(context, parser_context)
+
         return context
