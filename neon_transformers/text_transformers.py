@@ -73,13 +73,11 @@ class UtteranceTransformer:
 class UtteranceTransformersService:
 
     def __init__(self, bus, config=None):
-        self.config_core = config or {}
+        self.config_core = config or Configuration()
         self.loaded_modules = {}
         self.has_loaded = False
         self.bus = bus
-        self.config = self.config_core.get("utterance_transformers") or \
-            {"neon_utterance_translator_plugin": {},
-             "neon_utterance_normalizer_plugin": {}}
+        self.config = self.config_core.get("utterance_transformers") or dict()
         self.load_plugins()
 
     def load_plugins(self):
