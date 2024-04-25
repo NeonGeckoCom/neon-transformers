@@ -33,7 +33,6 @@ import unittest
 from mock.mock import Mock
 from copy import deepcopy
 from ovos_utils.messagebus import FakeBus
-from mycroft_bus_client import Message
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from neon_transformers import UtteranceTransformer

@@ -31,7 +31,7 @@ from ovos_plugin_manager.metadata_transformers import find_metadata_transformer_
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
-from ovos_utils.messagebus import get_mycroft_bus
+from ovos_bus_client.util import get_mycroft_bus
 from neon_transformers.tasks import MetadataTask
 
 
