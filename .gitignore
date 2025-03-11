@@ -1,0 +1,7 @@
+/venv/
+/.idea/
+/dist/
+/.pytest_cache/
+tests/test-results.xml
+*.egg-info/
+__pycache__
