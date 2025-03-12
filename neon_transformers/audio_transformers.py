@@ -134,11 +134,11 @@ class AudioTransformer:
 class AudioTransformersService:
 
     def __init__(self, bus, config=None):
-        self.config_core = config or {}
+        self.config_core = config or Configuration()
         self.loaded_modules = {}
         self.has_loaded = False
         self.bus = bus
-        self.config = self.config_core.get("audio_transformers") or {"neon_noise_level_plugin": {}}
+        self.config = self.config_core.get("audio_transformers") or dict()
         self.load_plugins()
 
     def load_plugins(self):
