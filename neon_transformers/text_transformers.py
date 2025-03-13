@@ -26,7 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
@@ -56,7 +56,7 @@ class UtteranceTransformer:
         pass
 
     def transform(self, utterances: List[str],
-                  context: dict = None) -> tuple[list, dict]:
+                  context: dict = None) -> Tuple[list, dict]:
         """
         Optionally transform passed utterances and/or return additional context
         :param utterances: List of str utterances to parse
