@@ -127,6 +127,8 @@ class TextTransformersTests(unittest.TestCase):
             {"test_mod_1": mod_1,
              "test_mod_2": mod_2}
 
+        on_text_context = Mock()
+        bus.once('neon.text_transformers.context', on_text_context)
         # Check transformers adding utterances
         new_utterances, context = service.transform(deepcopy(utterances),
                                                     {'lang': lang})
@@ -140,6 +142,14 @@ class TextTransformersTests(unittest.TestCase):
         _, context = service.transform(deepcopy(utterances),
                                        {'lang': lang})
         self.assertEqual(context["parser_context"], "mod_1")
+
+        # Check emitted context
+        on_text_context.assert_called_once()
+        msg = on_text_context.call_args[0][0]
+        self.assertEqual(msg.msg_type, 'neon.text_transformers.context')
+        self.assertEqual(msg.context, {'lang': lang,
+                                       "parser_context": "mod_2"})
+        self.assertEqual(msg.data, {"parser_context": "mod_2"})
 
 
 if __name__ == "__main__":
