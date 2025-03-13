@@ -1,6 +1,6 @@
 # NEON AI (TM) SOFTWARE, Software Development Kit & Application Framework
 # All trademark and other rights reserved by their respective owners
-# Copyright 2008-2022 Neongecko.com Inc.
+# Copyright 2008-2025 Neongecko.com Inc.
 # Contributors: Daniel McKnight, Guy Daniels, Elon Gasper, Richard Leeds,
 # Regina Bloomstine, Casimiro Ferreira, Andrii Pernatii, Kirill Hrymailo
 # BSD-3 License
@@ -33,7 +33,7 @@ from neon_transformers.streams import ReadWriteStream
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
-from ovos_utils.messagebus import get_mycroft_bus
+from ovos_bus_client.util import get_mycroft_bus
 from neon_transformers.tasks import AudioTask
 
 
@@ -134,11 +134,11 @@ class AudioTransformer:
 class AudioTransformersService:
 
     def __init__(self, bus, config=None):
-        self.config_core = config or {}
+        self.config_core = config or Configuration()
         self.loaded_modules = {}
         self.has_loaded = False
         self.bus = bus
-        self.config = self.config_core.get("audio_transformers") or {"neon_noise_level_plugin": {}}
+        self.config = self.config_core.get("audio_transformers") or dict()
         self.load_plugins()
 
     def load_plugins(self):

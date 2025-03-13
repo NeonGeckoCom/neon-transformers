@@ -1,6 +1,6 @@
 # NEON AI (TM) SOFTWARE, Software Development Kit & Application Framework
 # All trademark and other rights reserved by their respective owners
-# Copyright 2008-2022 Neongecko.com Inc.
+# Copyright 2008-2025 Neongecko.com Inc.
 # Contributors: Daniel McKnight, Guy Daniels, Elon Gasper, Richard Leeds,
 # Regina Bloomstine, Casimiro Ferreira, Andrii Pernatii, Kirill Hrymailo
 # BSD-3 License
@@ -26,12 +26,12 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from typing import List, Optional
+from typing import List, Optional, Tuple
 from ovos_plugin_manager.text_transformers import find_utterance_transformer_plugins, load_utterance_transformer_plugin
 from ovos_config.config import Configuration
 from ovos_utils.json_helper import merge_dict
 from ovos_utils.log import LOG
-from ovos_utils.messagebus import get_mycroft_bus
+from ovos_bus_client.util import get_mycroft_bus
 from neon_transformers.tasks import UtteranceTask
 
 
@@ -56,7 +56,7 @@ class UtteranceTransformer:
         pass
 
     def transform(self, utterances: List[str],
-                  context: dict = None) -> (list, dict):
+                  context: dict = None) -> Tuple[list, dict]:
         """
         Optionally transform passed utterances and/or return additional context
         :param utterances: List of str utterances to parse
@@ -73,12 +73,11 @@ class UtteranceTransformer:
 class UtteranceTransformersService:
 
     def __init__(self, bus, config=None):
-        self.config_core = config or {}
+        self.config_core = config or Configuration()
         self.loaded_modules = {}
         self.has_loaded = False
         self.bus = bus
-        self.config = self.config_core.get("utterance_transformers") or \
-            {"neon_utterance_translator": {}}
+        self.config = self.config_core.get("utterance_transformers") or dict()
         self.load_plugins()
 
     def load_plugins(self):
