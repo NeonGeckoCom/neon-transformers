@@ -56,7 +56,7 @@ class UtteranceTransformer:
         pass
 
     def transform(self, utterances: List[str],
-                  context: dict = None) -> (list, dict):
+                  context: dict = None) -> tuple[list, dict]:
         """
         Optionally transform passed utterances and/or return additional context
         :param utterances: List of str utterances to parse
